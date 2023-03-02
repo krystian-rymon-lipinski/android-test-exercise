@@ -24,7 +24,8 @@ class MainActivity : AppCompatActivity() {
 
         setupHttpClient()
         lifecycleScope.launch(Dispatchers.IO) {
-            loadNumbersInfo()
+            loadAllNumbersInfo()
+            loadNumberInfo(number = 1)
         }
     }
 
@@ -38,12 +39,9 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun loadNumbersInfo() {
-        httpService.getNumbersInfo().enqueue(object : Callback<List<NumberData>> {
-            override fun onResponse(
-                call: Call<List<NumberData>>?,
-                response: Response<List<NumberData>>?
-            ) {
+    private fun loadAllNumbersInfo() {
+        httpService.getAllNumbersInfo().enqueue(object : Callback<List<NumberData>> {
+            override fun onResponse(call: Call<List<NumberData>>?, response: Response<List<NumberData>>?) {
                 response?.let {
                     val responseData = it.body()
                     Timber.d("HERE: $responseData")
@@ -55,7 +53,21 @@ class MainActivity : AppCompatActivity() {
             }
 
         })
+    }
 
+    private fun loadNumberInfo(number: Int) {
+        httpService.getNumberInfo(number.toString()).enqueue(object : Callback<NumberData>{
+            override fun onResponse(call: Call<NumberData>?, response: Response<NumberData>?) {
+                response?.let {
+                    val responseData = it.body()
+                    Timber.d("HERE: $responseData")
+                } ?: Timber.d("HERE: No data returned")
+            }
+
+            override fun onFailure(call: Call<NumberData>?, t: Throwable?) {
+                Timber.d("HERE: failure; ${t?.toString()}")
+            }
+        })
     }
 
     companion object {
