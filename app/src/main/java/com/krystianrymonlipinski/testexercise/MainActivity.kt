@@ -2,8 +2,11 @@ package com.krystianrymonlipinski.testexercise
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import androidx.lifecycle.lifecycleScope
 import com.krystianrymonlipinski.testexercise.retrofit.HttpService
 import com.krystianrymonlipinski.testexercise.retrofit.model.NumberData
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -20,10 +23,9 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
 
         setupHttpClient()
-
-        Thread {
+        lifecycleScope.launch(Dispatchers.IO) {
             loadNumbersInfo()
-        }.start()
+        }
     }
 
     private fun setupHttpClient() {
