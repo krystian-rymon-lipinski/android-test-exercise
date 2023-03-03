@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">Test Exercise</string>
+    <string name="content_desc_number_image">Number image</string>
 </resources>
