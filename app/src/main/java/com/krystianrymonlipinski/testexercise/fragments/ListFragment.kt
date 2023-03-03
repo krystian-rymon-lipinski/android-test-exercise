@@ -43,13 +43,8 @@ class ListFragment : Fragment() {
 
     private fun setupDataChangeObservers() {
         (activity as? MainActivity)?.viewModel?.let { viewModel ->
-            viewModel.isLoadingSuccessful.observe(viewLifecycleOwner) {
-                if (it) {
-                    numberInfoAdapter.updateNumbersInfo(viewModel.getNumbersData())
-                }
-            }
-            viewModel.loadedImageIndex.observe(viewLifecycleOwner) {
-                numberInfoAdapter.updateImage(it, viewModel.getNumbersData()[it].image)
+            viewModel.numbersData.observe(viewLifecycleOwner) {
+                numberInfoAdapter.updateNumbersInfo(it)
             }
         }
     }

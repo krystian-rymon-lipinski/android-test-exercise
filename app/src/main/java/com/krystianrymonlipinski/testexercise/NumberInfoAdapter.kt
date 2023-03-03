@@ -1,6 +1,5 @@
 package com.krystianrymonlipinski.testexercise
 
-import android.graphics.Bitmap
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
@@ -8,7 +7,7 @@ import com.krystianrymonlipinski.testexercise.databinding.AdapterNumberInfoBindi
 
 class NumberInfoAdapter : RecyclerView.Adapter<NumberInfoAdapter.NumberInfoViewHolder>() {
 
-    private var numbersData = mutableListOf<NumberData>()
+    private var numbersData = listOf<NumberData>()
 
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): NumberInfoViewHolder {
@@ -23,14 +22,9 @@ class NumberInfoAdapter : RecyclerView.Adapter<NumberInfoAdapter.NumberInfoViewH
 
     override fun getItemCount() = numbersData.size
 
-    fun updateNumbersInfo(newList: MutableList<NumberData>) {
+    fun updateNumbersInfo(newList: List<NumberData>) {
         numbersData = newList
         notifyDataSetChanged()
-    }
-
-    fun updateImage(index: Int, bitmap: Bitmap?) {
-        numbersData[index].image = bitmap
-        notifyItemChanged(index)
     }
 
 

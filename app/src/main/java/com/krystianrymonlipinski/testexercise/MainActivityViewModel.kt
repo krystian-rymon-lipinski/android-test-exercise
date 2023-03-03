@@ -5,8 +5,11 @@ import android.graphics.BitmapFactory
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.krystianrymonlipinski.testexercise.retrofit.HttpService
 import com.krystianrymonlipinski.testexercise.retrofit.model.NumberObject
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import okhttp3.ResponseBody
 import retrofit2.Call
 import retrofit2.Callback
@@ -17,13 +20,12 @@ import timber.log.Timber
 
 class MainActivityViewModel : ViewModel() {
 
-    private var numbersData = mutableListOf<NumberData>()
     private lateinit var httpService: HttpService
 
+    private val _numbersData: MutableLiveData<List<NumberData>> = MutableLiveData(listOf())
+    val numbersData: LiveData<List<NumberData>> = _numbersData
     private val _isLoadingSuccessful: MutableLiveData<Boolean> = MutableLiveData(false)
     val isLoadingSuccessful: LiveData<Boolean> = _isLoadingSuccessful
-    private val _loadedImageIndex: MutableLiveData<Int> = MutableLiveData()
-    val loadedImageIndex: LiveData<Int> = _loadedImageIndex
 
     init {
         setupHttpClient()
@@ -38,22 +40,20 @@ class MainActivityViewModel : ViewModel() {
         }
     }
 
-    fun getNumbersData() = numbersData
-
     fun loadAllNumbersInfo() {
         httpService.getAllNumbersInfo().enqueue(object : Callback<List<NumberObject>> {
             override fun onResponse(call: Call<List<NumberObject>>?, response: Response<List<NumberObject>>?) {
                 response?.let { res ->
-                    numbersData = res.body().map {
+                    _numbersData.value = res.body().map {
                         NumberData(it.name, null)
-                    }.toMutableList()
+                    }
+                    _isLoadingSuccessful.postValue(true)
 
                     res.body().onEachIndexed { index, numberObject ->
                         val updatedUrl = numberObject.imageUrl.replace("http", "https", ignoreCase = false)
                         loadImage(index, updatedUrl)
                     }
 
-                    _isLoadingSuccessful.postValue(true)
                 } ?: _isLoadingSuccessful.postValue(false)
             }
 
@@ -83,9 +83,12 @@ class MainActivityViewModel : ViewModel() {
         httpService.getImage(url).enqueue(object : Callback<ResponseBody> {
             override fun onResponse(call: Call<ResponseBody>?, response: Response<ResponseBody>?) {
                 response?.let {
-                    val bitmap = BitmapFactory.decodeStream(it.body().byteStream())
-                    numbersData[index].image = bitmap
-                    _loadedImageIndex.postValue(index)
+                    viewModelScope.launch(Dispatchers.IO) {
+                        val bitmap = BitmapFactory.decodeStream(it.body().byteStream())
+                        _numbersData.postValue(_numbersData.value?.apply {
+                            get(index).image = bitmap
+                        })
+                    }
                 }
             }
 
