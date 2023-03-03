@@ -29,6 +29,7 @@
             android:layout_height="wrap_content"
             android:layout_alignParentEnd="true"
             android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
             tools:src="@drawable/ic_launcher_background"
             android:contentDescription="@string/content_desc_number_image" />
 

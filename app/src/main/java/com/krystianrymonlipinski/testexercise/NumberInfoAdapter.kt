@@ -1,14 +1,14 @@
 package com.krystianrymonlipinski.testexercise
 
+import android.graphics.Bitmap
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.krystianrymonlipinski.testexercise.databinding.AdapterNumberInfoBinding
-import com.krystianrymonlipinski.testexercise.retrofit.model.NumberData
 
 class NumberInfoAdapter : RecyclerView.Adapter<NumberInfoAdapter.NumberInfoViewHolder>() {
 
-    private var numbersInfo = listOf<NumberData>()
+    private var numbersData = mutableListOf<NumberData>()
 
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): NumberInfoViewHolder {
@@ -17,15 +17,20 @@ class NumberInfoAdapter : RecyclerView.Adapter<NumberInfoAdapter.NumberInfoViewH
     }
 
     override fun onBindViewHolder(holder: NumberInfoViewHolder, position: Int) {
-        val info = numbersInfo[position]
+        val info = numbersData[position]
         holder.bind(info)
     }
 
-    override fun getItemCount() = numbersInfo.size
+    override fun getItemCount() = numbersData.size
 
-    fun updateNumbersInfo(newList: List<NumberData>) {
-        numbersInfo = newList
+    fun updateNumbersInfo(newList: MutableList<NumberData>) {
+        numbersData = newList
         notifyDataSetChanged()
+    }
+
+    fun updateImage(index: Int, bitmap: Bitmap?) {
+        numbersData[index].image = bitmap
+        notifyItemChanged(index)
     }
 
 
@@ -36,6 +41,7 @@ class NumberInfoAdapter : RecyclerView.Adapter<NumberInfoAdapter.NumberInfoViewH
         fun bind(info: NumberData) {
             _binding.apply {
                 tvNumberName.text = info.name
+                ivNumberImage.setImageBitmap(info.image)
             }
         }
 
