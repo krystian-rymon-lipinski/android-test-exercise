@@ -57,7 +57,7 @@ class MainActivityViewModel : ViewModel() {
                     _isLoadingSuccessful.postValue(true)
 
                     res.body().onEachIndexed { index, numberObject ->
-                        loadImage(index, numberObject.imageUrl)
+                        loadImage(numberObject.imageUrl, index)
                     }
 
                 } ?: _isLoadingSuccessful.postValue(false)
@@ -84,39 +84,23 @@ class MainActivityViewModel : ViewModel() {
         })
     }
 
-    private fun loadImage(url: String) {
-        val updatedUrl = url.replace("http", "https", ignoreCase = false)
+    private fun loadImage(url: String, index: Int? = null) {
+        val secureUrl = url.replace("http", "https", ignoreCase = false)
 
-        httpService.getImage(updatedUrl).enqueue(object : Callback<ResponseBody> {
+        httpService.getImage(secureUrl).enqueue(object : Callback<ResponseBody> {
             override fun onResponse(call: Call<ResponseBody>?, response: Response<ResponseBody>?) {
                 response?.let {
-                    Timber.d("HERE; image loaded")
                     viewModelScope.launch(Dispatchers.IO) {
                         val bitmap = BitmapFactory.decodeStream(it.body().byteStream())
-                        _displayedImage.postValue(NumberData(
+
+                        index?.let { index ->
+                            _numbersData.postValue(_numbersData.value?.apply {
+                                get(index).image = bitmap
+                            })
+                        } ?: _displayedImage.postValue(NumberData(
                             selectedNumber.value!!,
                             bitmap
                         ))
-                    }
-                }
-            }
-
-            override fun onFailure(call: Call<ResponseBody>?, t: Throwable?) {
-                Timber.d("HERE; load image failed: ${t.toString()}")
-                //TODO: show a default image indicating it didn't work
-            }
-        })
-    }
-
-    private fun loadImage(index: Int, url: String) {
-        httpService.getImage(url).enqueue(object : Callback<ResponseBody> {
-            override fun onResponse(call: Call<ResponseBody>?, response: Response<ResponseBody>?) {
-                response?.let {
-                    viewModelScope.launch(Dispatchers.IO) {
-                        val bitmap = BitmapFactory.decodeStream(it.body().byteStream())
-                        _numbersData.postValue(_numbersData.value?.apply {
-                            get(index).image = bitmap
-                        })
                     }
                 }
             }
