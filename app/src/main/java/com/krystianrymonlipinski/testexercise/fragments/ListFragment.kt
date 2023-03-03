@@ -9,6 +9,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.krystianrymonlipinski.testexercise.MainActivity
 import com.krystianrymonlipinski.testexercise.NumberInfoAdapter
 import com.krystianrymonlipinski.testexercise.databinding.FragmentListBinding
+import timber.log.Timber
 
 class ListFragment : Fragment() {
 
@@ -31,7 +32,7 @@ class ListFragment : Fragment() {
     }
 
     private fun setupRecyclerView() {
-        numberInfoAdapter = NumberInfoAdapter()
+        numberInfoAdapter = NumberInfoAdapter(onNumberClickedListener)
 
         _binding.rvNumbersInfo.apply {
             adapter = numberInfoAdapter
@@ -46,6 +47,13 @@ class ListFragment : Fragment() {
             viewModel.numbersData.observe(viewLifecycleOwner) {
                 numberInfoAdapter.updateNumbersInfo(it)
             }
+        }
+    }
+
+    private val onNumberClickedListener = object : NumberInfoAdapter.OnNumberClickedListener {
+        override fun onNumberClicked(index: Int) {
+            Timber.d("HERE; item $index. clicked")
+            //TODO: navigate to details fragment
         }
     }
 }
