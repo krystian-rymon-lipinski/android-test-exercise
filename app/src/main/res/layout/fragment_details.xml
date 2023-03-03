@@ -8,6 +8,7 @@
     tools:ignore="UseCompoundDrawables">
 
     <ImageView
+        android:id="@+id/iv_number_image_large"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:contentDescription="@string/content_desc_number_image_larger"
@@ -15,6 +16,7 @@
         tools:src="@drawable/ic_launcher_background" />
 
     <TextView
+        android:id="@+id/tv_number_name_large"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textSize="22sp"

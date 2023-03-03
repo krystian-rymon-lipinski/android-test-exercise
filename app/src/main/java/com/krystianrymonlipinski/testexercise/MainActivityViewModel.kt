@@ -1,6 +1,5 @@
 package com.krystianrymonlipinski.testexercise
 
-import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -24,8 +23,10 @@ class MainActivityViewModel : ViewModel() {
 
     private val _numbersData: MutableLiveData<List<NumberData>> = MutableLiveData(listOf())
     val numbersData: LiveData<List<NumberData>> = _numbersData
-    private val _selectedNumber: MutableLiveData<NumberData> = MutableLiveData()
-    val selectedNumber: LiveData<NumberData> = _selectedNumber
+    private val _selectedNumber: MutableLiveData<String> = MutableLiveData()
+    val selectedNumber: LiveData<String> = _selectedNumber
+    private val _displayedImage: MutableLiveData<NumberData> = MutableLiveData()
+    val displayedImage: LiveData<NumberData> = _displayedImage
     private val _isLoadingSuccessful: MutableLiveData<Boolean> = MutableLiveData(false)
     val isLoadingSuccessful: LiveData<Boolean> = _isLoadingSuccessful
 
@@ -43,7 +44,7 @@ class MainActivityViewModel : ViewModel() {
     }
 
     fun setSelectedNumber(index: Int) {
-        _selectedNumber.value = _numbersData.value?.get(index)
+        _selectedNumber.value = _numbersData.value?.get(index)?.name
     }
 
     fun loadAllNumbersInfo() {
@@ -56,8 +57,7 @@ class MainActivityViewModel : ViewModel() {
                     _isLoadingSuccessful.postValue(true)
 
                     res.body().onEachIndexed { index, numberObject ->
-                        val updatedUrl = numberObject.imageUrl.replace("http", "https", ignoreCase = false)
-                        loadImage(index, updatedUrl)
+                        loadImage(index, numberObject.imageUrl)
                     }
 
                 } ?: _isLoadingSuccessful.postValue(false)
@@ -70,12 +70,11 @@ class MainActivityViewModel : ViewModel() {
         })
     }
 
-    fun loadNumberInfo(number: Int) {
-        httpService.getNumberInfo(number.toString()).enqueue(object : Callback<NumberObject> {
+    fun loadNumberInfo(numberName: String) {
+        httpService.getNumberInfo(numberName).enqueue(object : Callback<NumberObject> {
             override fun onResponse(call: Call<NumberObject>?, response: Response<NumberObject>?) {
                 response?.let {
-                    val responseData = it.body()
-                    Timber.d("HERE: $responseData")
+                    loadImage(it.body().imageUrl)
                 } ?: Timber.d("HERE: No data returned")
             }
 
@@ -85,7 +84,31 @@ class MainActivityViewModel : ViewModel() {
         })
     }
 
-    private fun loadImage(index: Int, url: String) : Bitmap? {
+    private fun loadImage(url: String) {
+        val updatedUrl = url.replace("http", "https", ignoreCase = false)
+
+        httpService.getImage(updatedUrl).enqueue(object : Callback<ResponseBody> {
+            override fun onResponse(call: Call<ResponseBody>?, response: Response<ResponseBody>?) {
+                response?.let {
+                    Timber.d("HERE; image loaded")
+                    viewModelScope.launch(Dispatchers.IO) {
+                        val bitmap = BitmapFactory.decodeStream(it.body().byteStream())
+                        _displayedImage.postValue(NumberData(
+                            selectedNumber.value!!,
+                            bitmap
+                        ))
+                    }
+                }
+            }
+
+            override fun onFailure(call: Call<ResponseBody>?, t: Throwable?) {
+                Timber.d("HERE; load image failed: ${t.toString()}")
+                //TODO: show a default image indicating it didn't work
+            }
+        })
+    }
+
+    private fun loadImage(index: Int, url: String) {
         httpService.getImage(url).enqueue(object : Callback<ResponseBody> {
             override fun onResponse(call: Call<ResponseBody>?, response: Response<ResponseBody>?) {
                 response?.let {
@@ -99,10 +122,9 @@ class MainActivityViewModel : ViewModel() {
             }
 
             override fun onFailure(call: Call<ResponseBody>?, t: Throwable?) {
-
+                //TODO: show a default image indicating it didn't work
             }
         })
-        return null
     }
 
     companion object {

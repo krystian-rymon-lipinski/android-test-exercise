@@ -19,10 +19,9 @@ class MainActivity : AppCompatActivity() {
 
         lifecycleScope.launch(Dispatchers.IO) {
             viewModel.loadAllNumbersInfo()
-            viewModel.loadNumberInfo(number = 1)
         }
     }
-    
+
 
     fun toggleUpButton(shouldShowUpButton: Boolean) {
         supportActionBar?.apply {
