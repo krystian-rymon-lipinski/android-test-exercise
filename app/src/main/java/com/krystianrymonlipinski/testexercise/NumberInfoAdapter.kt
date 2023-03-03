@@ -8,11 +8,11 @@ import com.krystianrymonlipinski.testexercise.retrofit.model.NumberData
 
 class NumberInfoAdapter : RecyclerView.Adapter<NumberInfoAdapter.NumberInfoViewHolder>() {
 
-    private val numbersInfo = listOf<NumberData>()
+    private var numbersInfo = listOf<NumberData>()
 
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): NumberInfoViewHolder {
-        val _binding = AdapterNumberInfoBinding.inflate(LayoutInflater.from(parent.context))
+        val _binding = AdapterNumberInfoBinding.inflate(LayoutInflater.from(parent.context), parent, false)
         return NumberInfoViewHolder(_binding)
     }
 
@@ -23,12 +23,22 @@ class NumberInfoAdapter : RecyclerView.Adapter<NumberInfoAdapter.NumberInfoViewH
 
     override fun getItemCount() = numbersInfo.size
 
+    fun updateNumbersInfo(newList: List<NumberData>) {
+        numbersInfo = newList
+        notifyDataSetChanged()
+    }
 
-    inner class NumberInfoViewHolder(_binding: AdapterNumberInfoBinding) : RecyclerView.ViewHolder(_binding.root) {
+
+    inner class NumberInfoViewHolder(
+        private val _binding: AdapterNumberInfoBinding
+    ) : RecyclerView.ViewHolder(_binding.root) {
 
         fun bind(info: NumberData) {
-
+            _binding.apply {
+                tvNumberName.text = info.name
+            }
         }
+
     }
 
 
