@@ -27,8 +27,8 @@ class MainActivityViewModel : ViewModel() {
     val selectedNumber: LiveData<String> = _selectedNumber
     private val _displayedImage: MutableLiveData<NumberData> = MutableLiveData()
     val displayedImage: LiveData<NumberData> = _displayedImage
-    private val _isLoadingSuccessful: MutableLiveData<Boolean> = MutableLiveData(false)
-    val isLoadingSuccessful: LiveData<Boolean> = _isLoadingSuccessful
+    private val _dataRetrievalState: MutableLiveData<DataRetrievalState> = MutableLiveData(DataRetrievalState.LOADING)
+    val dataRetrievalState: LiveData<DataRetrievalState> = _dataRetrievalState
 
     init {
         setupHttpClient()
@@ -47,6 +47,10 @@ class MainActivityViewModel : ViewModel() {
         _selectedNumber.value = _numbersData.value?.get(index)?.name
     }
 
+    fun setDataRetrievalState(state: DataRetrievalState) {
+        _dataRetrievalState.value = state
+    }
+
     fun loadAllNumbersInfo() {
         httpService.getAllNumbersInfo().enqueue(object : Callback<List<NumberObject>> {
             override fun onResponse(call: Call<List<NumberObject>>?, response: Response<List<NumberObject>>?) {
@@ -54,17 +58,17 @@ class MainActivityViewModel : ViewModel() {
                     _numbersData.value = res.body().map {
                         NumberData(it.name, null)
                     }
-                    _isLoadingSuccessful.postValue(true)
+                    _dataRetrievalState.postValue(DataRetrievalState.SUCCESS)
 
                     res.body().onEachIndexed { index, numberObject ->
                         loadImage(numberObject.imageUrl, index)
                     }
 
-                } ?: _isLoadingSuccessful.postValue(false)
+                } ?: _dataRetrievalState.postValue(DataRetrievalState.FAILURE)
             }
 
             override fun onFailure(call: Call<List<NumberObject>>?, t: Throwable?) {
-                _isLoadingSuccessful.postValue(false)
+                _dataRetrievalState.postValue(DataRetrievalState.FAILURE)
             }
 
         })
@@ -111,8 +115,13 @@ class MainActivityViewModel : ViewModel() {
         })
     }
 
+    enum class DataRetrievalState {
+        LOADING,
+        FAILURE,
+        SUCCESS
+    }
+
     companion object {
         private const val INFO_BASE_URL = " https://dev.tapptic.com/test/"
-
     }
 }
