@@ -1,3 +1,9 @@
 <resources>
     <string name="app_name">Test Exercise</string>
+    <string name="content_desc_number_image">Number image</string>
+    <string name="content_desc_number_image_larger">Larger number image</string>
+
+    <string name="loading_data">Loading data…</string>
+    <string name="loading_failed">Loading failed - no network detected</string>
+    <string name="btn_try_again">Try again</string>
 </resources>
