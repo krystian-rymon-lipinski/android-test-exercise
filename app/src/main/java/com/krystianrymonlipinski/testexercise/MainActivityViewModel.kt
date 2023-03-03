@@ -24,6 +24,8 @@ class MainActivityViewModel : ViewModel() {
 
     private val _numbersData: MutableLiveData<List<NumberData>> = MutableLiveData(listOf())
     val numbersData: LiveData<List<NumberData>> = _numbersData
+    private val _selectedNumber: MutableLiveData<NumberData> = MutableLiveData()
+    val selectedNumber: LiveData<NumberData> = _selectedNumber
     private val _isLoadingSuccessful: MutableLiveData<Boolean> = MutableLiveData(false)
     val isLoadingSuccessful: LiveData<Boolean> = _isLoadingSuccessful
 
@@ -38,6 +40,10 @@ class MainActivityViewModel : ViewModel() {
         }.build().also {
             httpService = it.create(HttpService::class.java)
         }
+    }
+
+    fun setSelectedNumber(index: Int) {
+        _selectedNumber.value = _numbersData.value?.get(index)
     }
 
     fun loadAllNumbersInfo() {

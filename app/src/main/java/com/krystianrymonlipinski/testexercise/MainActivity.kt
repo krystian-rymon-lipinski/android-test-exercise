@@ -22,5 +22,13 @@ class MainActivity : AppCompatActivity() {
             viewModel.loadNumberInfo(number = 1)
         }
     }
+    
+
+    fun toggleUpButton(shouldShowUpButton: Boolean) {
+        supportActionBar?.apply {
+            setDisplayShowHomeEnabled(shouldShowUpButton)
+            setDisplayHomeAsUpEnabled(shouldShowUpButton)
+        }
+    }
 
 }
