@@ -46,6 +46,10 @@ class ListFragment : Fragment() {
                 orientation = LinearLayoutManager.VERTICAL
             }
         }
+        (activity as? MainActivity)?.viewModel?.let {
+            numberInfoAdapter.updateNumbersInfo(it.getAllNumbersInfo())
+        }
+
     }
 
     private fun setupUiListeners() {

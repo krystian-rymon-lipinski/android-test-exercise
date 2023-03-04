@@ -51,6 +51,10 @@ class MainActivityViewModel : ViewModel() {
         _dataRetrievalState.value = state
     }
 
+    fun isDataLoaded() = _dataRetrievalState.value != DataRetrievalState.LOADING
+
+    fun getAllNumbersInfo() = _numbersData.value ?: emptyList()
+
     fun loadAllNumbersInfo() {
         httpService.getAllNumbersInfo().enqueue(object : Callback<List<NumberObject>> {
             override fun onResponse(call: Call<List<NumberObject>>?, response: Response<List<NumberObject>>?) {
