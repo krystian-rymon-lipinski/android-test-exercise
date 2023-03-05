@@ -84,9 +84,13 @@ class ListFragment : Fragment() {
     }
 
     private fun navigateToDetails() {
-        val navFragment = activity?.supportFragmentManager?.findFragmentById(
-            R.id.nav_host_fragment_container) as? NavHostFragment
-        navFragment?.navController?.navigate(R.id.action_listFragment_to_detailsFragment)
+        (activity as? MainActivity)?.layoutMode?.let {
+            if (it == MainActivity.LayoutMode.PORTRAIT) {
+                val navFragment = activity?.supportFragmentManager?.findFragmentById(
+                    R.id.nav_host_fragment_container) as? NavHostFragment
+                navFragment?.navController?.navigate(R.id.action_listFragment_to_detailsFragment)
+            }
+        }
     }
 
     private fun showProgressDialog() {

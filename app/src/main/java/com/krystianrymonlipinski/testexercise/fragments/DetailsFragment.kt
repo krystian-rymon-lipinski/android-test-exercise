@@ -3,8 +3,10 @@ package com.krystianrymonlipinski.testexercise.fragments
 import android.os.Bundle
 import android.view.*
 import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.NavHostFragment
 import com.krystianrymonlipinski.testexercise.MainActivity
 import com.krystianrymonlipinski.testexercise.NumberData
+import com.krystianrymonlipinski.testexercise.R
 import com.krystianrymonlipinski.testexercise.databinding.FragmentDetailsBinding
 
 class DetailsFragment : Fragment() {
@@ -50,7 +52,8 @@ class DetailsFragment : Fragment() {
         return when (item.itemId) {
             android.R.id.home -> {
                 (activity as? MainActivity)?.let {
-                    it.onBackPressed()
+                    val navFragment = it.supportFragmentManager.findFragmentById(R.id.nav_host_fragment_container) as NavHostFragment
+                    navFragment.navController.popBackStack()
                     it.toggleUpButton(shouldShowUpButton = false)
                 }
                 true

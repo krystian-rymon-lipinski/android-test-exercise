@@ -9,10 +9,13 @@ import androidx.navigation.fragment.NavHostFragment
 class MainActivity : AppCompatActivity() {
 
     lateinit var viewModel: MainActivityViewModel
+    lateinit var layoutMode: LayoutMode
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
+        calculateLayoutMode()
 
         viewModel = ViewModelProvider(this)[MainActivityViewModel::class.java].also {
             val isDataLoaded = savedInstanceState?.getBoolean(SAVED_STATE_DATA_RETRIEVAL) ?: false
@@ -30,6 +33,7 @@ class MainActivity : AppCompatActivity() {
 
     override fun onConfigurationChanged(newConfig: Configuration) {
         super.onConfigurationChanged(newConfig)
+        calculateLayoutMode()
 
         val navFragment = supportFragmentManager.findFragmentById(R.id.nav_host_fragment_container) as NavHostFragment
         with(navFragment.navController) {
@@ -44,8 +48,26 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    private fun calculateLayoutMode() {
+        with(resources) {
+            val widthDp = displayMetrics.widthPixels / displayMetrics.density
+            val orientation = configuration.orientation
+
+            layoutMode =
+                if (widthDp >= LANDSCAPE_MODE_SCREEN_WIDTH &&
+                    orientation == Configuration.ORIENTATION_LANDSCAPE) LayoutMode.LANDSCAPE
+                else LayoutMode.PORTRAIT
+        }
+    }
+
+    enum class LayoutMode {
+        PORTRAIT,
+        LANDSCAPE
+    }
+
     companion object {
         private const val SAVED_STATE_DATA_RETRIEVAL: String = "data_retrieval"
+        private const val LANDSCAPE_MODE_SCREEN_WIDTH = 840f
     }
 
 }
