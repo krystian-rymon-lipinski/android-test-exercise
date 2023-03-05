@@ -11,11 +11,15 @@ class NumberInfoAdapter(
 
     private var numbersData = listOf<NumberData>()
 
+    private var currentlyActiveIndex: Int? = null
+
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): NumberInfoViewHolder {
         val _binding = AdapterNumberInfoBinding.inflate(LayoutInflater.from(parent.context), parent, false)
         return NumberInfoViewHolder(_binding).apply {
             _binding.root.setOnClickListener { withProperAdapterIndex(adapterPosition) {
+                setIsSelected(isSelected = true)
+                currentlyActiveIndex = adapterPosition
                 onNumberClickedListener.onNumberClicked(adapterPosition)
             } }
         }
@@ -51,6 +55,10 @@ class NumberInfoAdapter(
                 tvNumberName.text = info.name
                 ivNumberImage.setImageBitmap(info.image)
             }
+        }
+
+        fun setIsSelected(isSelected: Boolean) {
+            _binding.root.setIsSelected(isSelected)
         }
 
     }
