@@ -49,12 +49,9 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun calculateLayoutMode() {
-        with(resources) {
-            val widthDp = displayMetrics.widthPixels / displayMetrics.density
-            val orientation = configuration.orientation
-
+        with(resources.configuration) {
             layoutMode =
-                if (widthDp >= LANDSCAPE_MODE_SCREEN_WIDTH &&
+                if (screenWidthDp >= LANDSCAPE_MODE_SCREEN_WIDTH &&
                     orientation == Configuration.ORIENTATION_LANDSCAPE) LayoutMode.LANDSCAPE
                 else LayoutMode.PORTRAIT
         }
