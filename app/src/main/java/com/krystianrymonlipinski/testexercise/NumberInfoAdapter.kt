@@ -11,15 +11,15 @@ class NumberInfoAdapter(
 
     private var numbersData = listOf<NumberData>()
 
-    private var currentlyActiveIndex: Int? = null
+    private var currentlyActiveCard: NumberCardView? = null
 
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): NumberInfoViewHolder {
         val _binding = AdapterNumberInfoBinding.inflate(LayoutInflater.from(parent.context), parent, false)
         return NumberInfoViewHolder(_binding).apply {
             _binding.root.setOnClickListener { withProperAdapterIndex(adapterPosition) {
-                setIsSelected(isSelected = true)
-                currentlyActiveIndex = adapterPosition
+                currentlyActiveCard?.setIsSelected(isSelected = false)
+                this.setIsSelected(isSelected = true)
                 onNumberClickedListener.onNumberClicked(adapterPosition)
             } }
         }
@@ -59,6 +59,7 @@ class NumberInfoAdapter(
 
         fun setIsSelected(isSelected: Boolean) {
             _binding.root.setIsSelected(isSelected)
+            currentlyActiveCard = _binding.root
         }
 
     }
