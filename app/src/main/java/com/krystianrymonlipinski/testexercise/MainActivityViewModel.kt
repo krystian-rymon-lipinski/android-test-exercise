@@ -30,6 +30,9 @@ class MainActivityViewModel : ViewModel() {
     private val _dataRetrievalState: MutableLiveData<DataRetrievalState> = MutableLiveData(DataRetrievalState.LOADING)
     val dataRetrievalState: LiveData<DataRetrievalState> = _dataRetrievalState
 
+    private val _currentlySelectedNumber: MutableLiveData<Int?> = MutableLiveData()
+    val currentlySelectedNumber: LiveData<Int?> = _currentlySelectedNumber
+
     init {
         setupHttpClient()
     }
@@ -45,6 +48,7 @@ class MainActivityViewModel : ViewModel() {
 
     fun setSelectedNumber(index: Int) {
         _selectedNumber.value = _numbersData.value?.get(index)?.name
+        _currentlySelectedNumber.value = index
     }
 
     fun setDataRetrievalState(state: DataRetrievalState) {
@@ -54,6 +58,8 @@ class MainActivityViewModel : ViewModel() {
     fun isDataLoaded() = _dataRetrievalState.value != DataRetrievalState.LOADING
 
     fun getAllNumbersInfo() = _numbersData.value ?: emptyList()
+
+    fun getCurrentlySelectedNumber() = _currentlySelectedNumber.value
 
     fun loadAllNumbersInfo() {
         httpService.getAllNumbersInfo().enqueue(object : Callback<List<NumberObject>> {

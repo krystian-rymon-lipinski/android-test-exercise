@@ -38,7 +38,13 @@ class ListFragment : Fragment() {
     }
 
     private fun setupRecyclerView() {
-        numberInfoAdapter = NumberInfoAdapter(onNumberClickedListener)
+        val viewModel = (activity as? MainActivity)?.viewModel
+        val layoutMode = (activity as? MainActivity)?.layoutMode
+
+        numberInfoAdapter = NumberInfoAdapter(
+            if (layoutMode == MainActivity.LayoutMode.LANDSCAPE) viewModel?.getCurrentlySelectedNumber() else null,
+            onNumberClickedListener
+        )
 
         _binding.rvNumbersInfo.apply {
             adapter = numberInfoAdapter
@@ -46,7 +52,7 @@ class ListFragment : Fragment() {
                 orientation = LinearLayoutManager.VERTICAL
             }
         }
-        (activity as? MainActivity)?.viewModel?.let {
+        viewModel?.let {
             numberInfoAdapter.updateNumbersInfo(it.getAllNumbersInfo())
         }
 

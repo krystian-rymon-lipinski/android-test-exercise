@@ -17,6 +17,8 @@ class NumberCardView(context: Context, attrs: AttributeSet) : MaterialCardView(c
         refreshDrawableState()
     }
 
+    fun getIsSelected() = isSelected
+
     override fun onCreateDrawableState(extraSpace: Int): IntArray {
         val drawableState = super.onCreateDrawableState(extraSpace + 1)
         if (isSelected) {

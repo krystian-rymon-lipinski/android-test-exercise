@@ -6,11 +6,11 @@ import androidx.recyclerview.widget.RecyclerView
 import com.krystianrymonlipinski.testexercise.databinding.AdapterNumberInfoBinding
 
 class NumberInfoAdapter(
+    private var activeCardIndex: Int?,
     private val onNumberClickedListener: OnNumberClickedListener
 ) : RecyclerView.Adapter<NumberInfoAdapter.NumberInfoViewHolder>() {
 
     private var numbersData = listOf<NumberData>()
-
     private var currentlyActiveCard: NumberCardView? = null
 
 
@@ -20,6 +20,7 @@ class NumberInfoAdapter(
             _binding.root.setOnClickListener { withProperAdapterIndex(adapterPosition) {
                 currentlyActiveCard?.setIsSelected(isSelected = false)
                 this.setIsSelected(isSelected = true)
+                activeCardIndex = adapterPosition
                 onNumberClickedListener.onNumberClicked(adapterPosition)
             } }
         }
@@ -28,6 +29,7 @@ class NumberInfoAdapter(
     override fun onBindViewHolder(holder: NumberInfoViewHolder, position: Int) {
         val info = numbersData[position]
         holder.bind(info)
+        holder.setIsSelected(position == activeCardIndex)
     }
 
     override fun getItemCount() = numbersData.size
@@ -58,8 +60,15 @@ class NumberInfoAdapter(
         }
 
         fun setIsSelected(isSelected: Boolean) {
-            _binding.root.setIsSelected(isSelected)
-            currentlyActiveCard = _binding.root
+            with(_binding.root) {
+                if (this.getIsSelected() != isSelected) {
+                    this.setIsSelected(isSelected)
+                }
+
+                if (isSelected) {
+                    currentlyActiveCard = this
+                }
+            }
         }
 
     }
