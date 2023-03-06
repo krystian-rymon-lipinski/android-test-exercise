@@ -26,8 +26,8 @@ class MainActivityViewModel : ViewModel() {
     val numbersData: LiveData<List<NumberData>> = _numbersData
     private val _dataRetrievalState: MutableLiveData<DataRetrievalState> = MutableLiveData(DataRetrievalState.LOADING)
     val dataRetrievalState: LiveData<DataRetrievalState> = _dataRetrievalState
-    private val selectedNumber: MutableLiveData<SelectedCard?> = MutableLiveData()
-    val selectedCard: LiveData<SelectedCard?> = selectedNumber
+    private val _selectedNumber: MutableLiveData<SelectedCard?> = MutableLiveData()
+    val selectedNumber: LiveData<SelectedCard?> = _selectedNumber
 
     init {
         setupHttpClient()
@@ -44,7 +44,7 @@ class MainActivityViewModel : ViewModel() {
 
     fun handleOnCardClick(index: Int) {
         _numbersData.value?.get(index)?.name?.let {
-            selectedNumber.postValue(SelectedCard(index, it, null))
+            _selectedNumber.postValue(SelectedCard(index, it, null))
             loadNumberInfo(it)
         }
     }
@@ -53,9 +53,14 @@ class MainActivityViewModel : ViewModel() {
         _dataRetrievalState.value = state
     }
 
+    fun clearSelectedNumber() {
+        _selectedNumber.value = null
+    }
+
+    fun isNumberSelected() = _selectedNumber.value != null
     fun isDataLoaded() = _dataRetrievalState.value != DataRetrievalState.LOADING
     fun getAllNumbersInfo() = _numbersData.value ?: emptyList()
-    fun getCurrentlySelectedNumber() = selectedNumber.value?.index
+    fun getCurrentlySelectedNumber() = _selectedNumber.value?.index
 
     fun loadAllNumbersInfo() {
         httpService.getAllNumbersInfo().enqueue(object : Callback<List<NumberObject>> {
@@ -107,9 +112,7 @@ class MainActivityViewModel : ViewModel() {
                             _numbersData.postValue(_numbersData.value?.apply {
                                 get(index).image = bitmap
                             })
-                        } ?: run {
-                            selectedNumber.postValue(selectedNumber.value?.copy(image = bitmap))
-                        }
+                        } ?: _selectedNumber.postValue(_selectedNumber.value?.copy(image = bitmap))
                     }
                 }
             }

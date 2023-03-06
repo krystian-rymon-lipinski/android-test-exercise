@@ -35,6 +35,10 @@ class ListFragment : Fragment() {
         setupRecyclerView()
         setupUiListeners()
         setupDataChangeObservers()
+
+        (activity as? MainActivity)?.viewModel?.let {
+            if (it.isNumberSelected()) navigateToDetails()
+        }
     }
 
     private fun setupRecyclerView() {

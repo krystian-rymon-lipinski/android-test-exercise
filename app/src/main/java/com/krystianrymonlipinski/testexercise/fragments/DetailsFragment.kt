@@ -32,7 +32,7 @@ class DetailsFragment : Fragment() {
 
     private fun setupDataChangeObservers() {
         (activity as? MainActivity)?.viewModel?.let { viewModel ->
-            viewModel.selectedCard.observe(viewLifecycleOwner) {
+            viewModel.selectedNumber.observe(viewLifecycleOwner) {
                 displayInfo(it)
             }
         }
@@ -53,6 +53,7 @@ class DetailsFragment : Fragment() {
                 (activity as? MainActivity)?.let {
                     val navFragment = it.supportFragmentManager.findFragmentById(R.id.nav_host_fragment_container) as NavHostFragment
                     navFragment.navController.popBackStack()
+                    it.viewModel.clearSelectedNumber()
                     it.toggleUpButton(shouldShowUpButton = false)
                 }
                 true
