@@ -38,7 +38,13 @@ class ListFragment : Fragment() {
     }
 
     private fun setupRecyclerView() {
-        numberInfoAdapter = NumberInfoAdapter(onNumberClickedListener)
+        val viewModel = (activity as? MainActivity)?.viewModel
+        val layoutMode = (activity as? MainActivity)?.layoutMode
+
+        numberInfoAdapter = NumberInfoAdapter(
+            if (layoutMode == MainActivity.LayoutMode.LANDSCAPE) viewModel?.getCurrentlySelectedNumber() else null,
+            onNumberClickedListener
+        )
 
         _binding.rvNumbersInfo.apply {
             adapter = numberInfoAdapter
@@ -46,6 +52,10 @@ class ListFragment : Fragment() {
                 orientation = LinearLayoutManager.VERTICAL
             }
         }
+        viewModel?.let {
+            numberInfoAdapter.updateNumbersInfo(it.getAllNumbersInfo())
+        }
+
     }
 
     private fun setupUiListeners() {
@@ -80,9 +90,13 @@ class ListFragment : Fragment() {
     }
 
     private fun navigateToDetails() {
-        val navFragment = activity?.supportFragmentManager?.findFragmentById(
-            R.id.nav_host_fragment_container) as? NavHostFragment
-        navFragment?.navController?.navigate(R.id.action_listFragment_to_detailsFragment)
+        (activity as? MainActivity)?.layoutMode?.let {
+            if (it == MainActivity.LayoutMode.PORTRAIT) {
+                val navFragment = activity?.supportFragmentManager?.findFragmentById(
+                    R.id.nav_host_fragment_container) as? NavHostFragment
+                navFragment?.navController?.navigate(R.id.action_listFragment_to_detailsFragment)
+            }
+        }
     }
 
     private fun showProgressDialog() {
@@ -100,7 +114,7 @@ class ListFragment : Fragment() {
 
     private val onNumberClickedListener = object : NumberInfoAdapter.OnNumberClickedListener {
         override fun onNumberClicked(index: Int) {
-            (activity as? MainActivity)?.viewModel?.setSelectedNumber(index)
+            (activity as? MainActivity)?.viewModel?.handleOnCardClick(index)
             navigateToDetails()
         }
     }

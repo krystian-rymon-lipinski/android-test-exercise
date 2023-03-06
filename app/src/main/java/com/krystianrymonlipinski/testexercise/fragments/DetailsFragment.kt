@@ -3,8 +3,10 @@ package com.krystianrymonlipinski.testexercise.fragments
 import android.os.Bundle
 import android.view.*
 import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.NavHostFragment
 import com.krystianrymonlipinski.testexercise.MainActivity
-import com.krystianrymonlipinski.testexercise.NumberData
+import com.krystianrymonlipinski.testexercise.MainActivityViewModel
+import com.krystianrymonlipinski.testexercise.R
 import com.krystianrymonlipinski.testexercise.databinding.FragmentDetailsBinding
 
 class DetailsFragment : Fragment() {
@@ -30,19 +32,18 @@ class DetailsFragment : Fragment() {
 
     private fun setupDataChangeObservers() {
         (activity as? MainActivity)?.viewModel?.let { viewModel ->
-            viewModel.selectedNumber.observe(viewLifecycleOwner) {
-                viewModel.loadNumberInfo(it)
-            }
-            viewModel.displayedImage.observe(viewLifecycleOwner) {
-                displayImage(it)
+            viewModel.selectedCard.observe(viewLifecycleOwner) {
+                displayInfo(it)
             }
         }
     }
 
-    private fun displayImage(data: NumberData) {
-        _binding.apply {
-            ivNumberImageLarge.setImageBitmap(data.image)
-            tvNumberNameLarge.text = data.name
+    private fun displayInfo(data: MainActivityViewModel.SelectedCard?) {
+        data?.let {
+            _binding.apply {
+                ivNumberImageLarge.setImageBitmap(it.image)
+                tvNumberNameLarge.text = it.numberName
+            }
         }
     }
 
@@ -50,7 +51,8 @@ class DetailsFragment : Fragment() {
         return when (item.itemId) {
             android.R.id.home -> {
                 (activity as? MainActivity)?.let {
-                    it.onBackPressed()
+                    val navFragment = it.supportFragmentManager.findFragmentById(R.id.nav_host_fragment_container) as NavHostFragment
+                    navFragment.navController.popBackStack()
                     it.toggleUpButton(shouldShowUpButton = false)
                 }
                 true

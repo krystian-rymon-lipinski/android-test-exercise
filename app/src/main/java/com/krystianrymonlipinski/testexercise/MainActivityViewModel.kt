@@ -1,5 +1,6 @@
 package com.krystianrymonlipinski.testexercise
 
+import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -23,12 +24,10 @@ class MainActivityViewModel : ViewModel() {
 
     private val _numbersData: MutableLiveData<List<NumberData>> = MutableLiveData(listOf())
     val numbersData: LiveData<List<NumberData>> = _numbersData
-    private val _selectedNumber: MutableLiveData<String> = MutableLiveData()
-    val selectedNumber: LiveData<String> = _selectedNumber
-    private val _displayedImage: MutableLiveData<NumberData> = MutableLiveData()
-    val displayedImage: LiveData<NumberData> = _displayedImage
     private val _dataRetrievalState: MutableLiveData<DataRetrievalState> = MutableLiveData(DataRetrievalState.LOADING)
     val dataRetrievalState: LiveData<DataRetrievalState> = _dataRetrievalState
+    private val selectedNumber: MutableLiveData<SelectedCard?> = MutableLiveData()
+    val selectedCard: LiveData<SelectedCard?> = selectedNumber
 
     init {
         setupHttpClient()
@@ -43,13 +42,20 @@ class MainActivityViewModel : ViewModel() {
         }
     }
 
-    fun setSelectedNumber(index: Int) {
-        _selectedNumber.value = _numbersData.value?.get(index)?.name
+    fun handleOnCardClick(index: Int) {
+        _numbersData.value?.get(index)?.name?.let {
+            selectedNumber.postValue(SelectedCard(index, it, null))
+            loadNumberInfo(it)
+        }
     }
 
     fun setDataRetrievalState(state: DataRetrievalState) {
         _dataRetrievalState.value = state
     }
+
+    fun isDataLoaded() = _dataRetrievalState.value != DataRetrievalState.LOADING
+    fun getAllNumbersInfo() = _numbersData.value ?: emptyList()
+    fun getCurrentlySelectedNumber() = selectedNumber.value?.index
 
     fun loadAllNumbersInfo() {
         httpService.getAllNumbersInfo().enqueue(object : Callback<List<NumberObject>> {
@@ -74,7 +80,7 @@ class MainActivityViewModel : ViewModel() {
         })
     }
 
-    fun loadNumberInfo(numberName: String) {
+    private fun loadNumberInfo(numberName: String) {
         httpService.getNumberInfo(numberName).enqueue(object : Callback<NumberObject> {
             override fun onResponse(call: Call<NumberObject>?, response: Response<NumberObject>?) {
                 response?.let {
@@ -101,10 +107,9 @@ class MainActivityViewModel : ViewModel() {
                             _numbersData.postValue(_numbersData.value?.apply {
                                 get(index).image = bitmap
                             })
-                        } ?: _displayedImage.postValue(NumberData(
-                            selectedNumber.value!!,
-                            bitmap
-                        ))
+                        } ?: run {
+                            selectedNumber.postValue(selectedNumber.value?.copy(image = bitmap))
+                        }
                     }
                 }
             }
@@ -114,6 +119,12 @@ class MainActivityViewModel : ViewModel() {
             }
         })
     }
+
+    data class SelectedCard(
+        val index: Int,
+        val numberName: String,
+        val image: Bitmap?
+    )
 
     enum class DataRetrievalState {
         LOADING,
