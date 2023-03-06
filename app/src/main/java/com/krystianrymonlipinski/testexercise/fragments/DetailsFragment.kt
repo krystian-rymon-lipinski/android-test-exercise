@@ -25,7 +25,11 @@ class DetailsFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         setHasOptionsMenu(true)
-        (activity as? MainActivity)?.toggleUpButton(shouldShowUpButton = true)
+        (activity as? MainActivity)?.let {
+            if (it.layoutMode == MainActivity.LayoutMode.PORTRAIT) {
+                it.toggleUpButton(shouldShowUpButton = true)
+            }
+        }
 
         setupDataChangeObservers()
     }
