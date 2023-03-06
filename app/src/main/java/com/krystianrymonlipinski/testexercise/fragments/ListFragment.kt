@@ -114,7 +114,7 @@ class ListFragment : Fragment() {
 
     private val onNumberClickedListener = object : NumberInfoAdapter.OnNumberClickedListener {
         override fun onNumberClicked(index: Int) {
-            (activity as? MainActivity)?.viewModel?.setSelectedNumber(index)
+            (activity as? MainActivity)?.viewModel?.handleOnCardClick(index)
             navigateToDetails()
         }
     }
