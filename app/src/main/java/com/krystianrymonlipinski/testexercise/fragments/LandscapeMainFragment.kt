@@ -7,7 +7,6 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import com.krystianrymonlipinski.testexercise.R
 import com.krystianrymonlipinski.testexercise.databinding.FragmentLandscapeMainBinding
-import timber.log.Timber
 
 class LandscapeMainFragment : Fragment() {
 
@@ -24,7 +23,6 @@ class LandscapeMainFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        Timber.d("HERE, landscape fragment")
 
         childFragmentManager.beginTransaction().apply {
             add(R.id.list_fragment_container, ListFragment())

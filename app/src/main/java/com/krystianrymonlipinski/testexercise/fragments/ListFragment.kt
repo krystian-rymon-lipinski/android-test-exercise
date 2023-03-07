@@ -15,6 +15,8 @@ import com.krystianrymonlipinski.testexercise.databinding.FragmentListBinding
 class ListFragment : Fragment() {
 
     private lateinit var _binding: FragmentListBinding
+    private var viewModel: MainActivityViewModel? = null
+    private var layoutMode: MainActivity.LayoutMode? = null
     private var loadingDialog: LoadingDialog? = null
 
     private lateinit var numberInfoAdapter: NumberInfoAdapter
@@ -30,21 +32,22 @@ class ListFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        (activity as? MainActivity)?.toggleUpButton(shouldShowUpButton = false)
+        (activity as? MainActivity)?.let {
+            it.toggleUpButton(shouldShowUpButton = false)
+            viewModel = it.viewModel
+            layoutMode = it.layoutMode
+        }
 
         setupRecyclerView()
         setupUiListeners()
         setupDataChangeObservers()
 
-        (activity as? MainActivity)?.viewModel?.let {
+        viewModel?.let {
             if (it.isNumberSelected()) navigateToDetails()
         }
     }
 
     private fun setupRecyclerView() {
-        val viewModel = (activity as? MainActivity)?.viewModel
-        val layoutMode = (activity as? MainActivity)?.layoutMode
-
         numberInfoAdapter = NumberInfoAdapter(
             if (layoutMode == MainActivity.LayoutMode.LANDSCAPE) viewModel?.getCurrentlySelectedNumber() else null,
             onNumberClickedListener
@@ -64,13 +67,12 @@ class ListFragment : Fragment() {
 
     private fun setupUiListeners() {
         _binding.btnTryAgain.setOnClickListener {
-            (activity as? MainActivity)?.viewModel?.setDataRetrievalState(
-                MainActivityViewModel.DataRetrievalState.LOADING)
+            viewModel?.setDataRetrievalState(MainActivityViewModel.DataRetrievalState.LOADING)
         }
     }
 
     private fun setupDataChangeObservers() {
-        (activity as? MainActivity)?.viewModel?.let { viewModel ->
+        viewModel?.let { viewModel ->
             viewModel.numbersData.observe(viewLifecycleOwner) {
                 numberInfoAdapter.updateNumbersInfo(it)
             }
@@ -94,17 +96,15 @@ class ListFragment : Fragment() {
     }
 
     private fun navigateToDetails() {
-        (activity as? MainActivity)?.layoutMode?.let {
-            if (it == MainActivity.LayoutMode.PORTRAIT) {
-                val navFragment = activity?.supportFragmentManager?.findFragmentById(
-                    R.id.nav_host_fragment_container) as? NavHostFragment
-                navFragment?.navController?.navigate(R.id.action_listFragment_to_viewPagerDetailsFragment)
-            }
+        if (layoutMode == MainActivity.LayoutMode.PORTRAIT) {
+            val navFragment = activity?.supportFragmentManager?.findFragmentById(
+                R.id.nav_host_fragment_container) as? NavHostFragment
+            navFragment?.navController?.navigate(R.id.action_listFragment_to_viewPagerDetailsFragment)
         }
     }
 
     private fun showProgressDialog() {
-        loadingDialog = LoadingDialog().also{
+        loadingDialog = LoadingDialog().also {
             it.show(childFragmentManager, "loading_dialog")
         }
     }
@@ -118,7 +118,7 @@ class ListFragment : Fragment() {
 
     private val onNumberClickedListener = object : NumberInfoAdapter.OnNumberClickedListener {
         override fun onNumberClicked(index: Int) {
-            (activity as? MainActivity)?.viewModel?.handleOnNumberSelected(index)
+            viewModel?.handleOnNumberSelected(index)
             navigateToDetails()
         }
     }
