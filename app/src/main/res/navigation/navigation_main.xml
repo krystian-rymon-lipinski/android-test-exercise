@@ -11,16 +11,16 @@
         android:label="ListFragment"
         tools:layout="@layout/fragment_list">
         <action
-            android:id="@+id/action_listFragment_to_detailsFragment"
-            app:destination="@id/detailsFragment" />
+            android:id="@+id/action_listFragment_to_viewPagerDetailsFragment"
+            app:destination="@id/viewPagerDetailsFragment" />
     </fragment>
     <fragment
-        android:id="@+id/detailsFragment"
-        android:name="com.krystianrymonlipinski.testexercise.fragments.DetailsFragment"
-        android:label="DetailsFragment"
-        tools:layout="@layout/fragment_details">
+        android:id="@+id/viewPagerDetailsFragment"
+        android:name="com.krystianrymonlipinski.testexercise.fragments.ViewPagerDetailsFragment"
+        android:label="ViewPagerDetailsFragment"
+        tools:layout="@layout/fragment_view_pager_details">
         <action
-            android:id="@+id/action_detailsFragment_to_listFragment"
+            android:id="@+id/action_viewPagerDetailsFragment_to_listFragment"
             app:popUpTo="@id/listFragment" />
     </fragment>
 </navigation>

@@ -98,7 +98,7 @@ class ListFragment : Fragment() {
             if (it == MainActivity.LayoutMode.PORTRAIT) {
                 val navFragment = activity?.supportFragmentManager?.findFragmentById(
                     R.id.nav_host_fragment_container) as? NavHostFragment
-                navFragment?.navController?.navigate(R.id.action_listFragment_to_detailsFragment)
+                navFragment?.navController?.navigate(R.id.action_listFragment_to_viewPagerDetailsFragment)
             }
         }
     }
