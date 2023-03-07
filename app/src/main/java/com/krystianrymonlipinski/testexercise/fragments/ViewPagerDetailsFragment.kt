@@ -32,6 +32,7 @@ class ViewPagerDetailsFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         viewModel = (activity as? MainActivity)?.viewModel
         setupViewPager()
+        _binding.detailsViewPager.currentItem = viewModel?.selectedNumber?.value?.index ?: 0
     }
 
     private fun setupViewPager() {
@@ -39,7 +40,6 @@ class ViewPagerDetailsFragment : Fragment() {
             generateTabs(it.map { data -> data.name })
             detailsViewPager.apply {
                 adapter = PagerAdapter(it.size)
-                currentItem = viewModel?.selectedNumber?.value?.index ?: 0
                 registerOnPageChangeCallback(onPageChangeCallback)
             }
             TabLayoutMediator(detailsTabLayout, detailsViewPager) { tab, position ->
