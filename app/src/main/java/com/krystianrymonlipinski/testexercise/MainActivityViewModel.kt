@@ -8,19 +8,21 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.krystianrymonlipinski.testexercise.retrofit.HttpService
 import com.krystianrymonlipinski.testexercise.retrofit.model.NumberObject
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import okhttp3.ResponseBody
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
-import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
 import timber.log.Timber
+import javax.inject.Inject
 
-class MainActivityViewModel : ViewModel() {
+@HiltViewModel
+class MainActivityViewModel @Inject constructor(
+    private val httpService: HttpService
+) : ViewModel() {
 
-    private lateinit var httpService: HttpService
 
     private val _numbersData: MutableLiveData<List<NumberData>> = MutableLiveData(listOf())
     val numbersData: LiveData<List<NumberData>> = _numbersData
@@ -28,19 +30,6 @@ class MainActivityViewModel : ViewModel() {
     val dataRetrievalState: LiveData<DataRetrievalState> = _dataRetrievalState
     private val _selectedNumber: MutableLiveData<SelectedCard?> = MutableLiveData()
     val selectedNumber: LiveData<SelectedCard?> = _selectedNumber
-
-    init {
-        setupHttpClient()
-    }
-
-    private fun setupHttpClient() {
-        Retrofit.Builder().apply {
-            baseUrl(INFO_BASE_URL)
-            addConverterFactory(GsonConverterFactory.create())
-        }.build().also {
-            httpService = it.create(HttpService::class.java)
-        }
-    }
 
     fun handleOnNumberSelected(index: Int) {
         _numbersData.value?.get(index)?.name?.let {
@@ -135,7 +124,5 @@ class MainActivityViewModel : ViewModel() {
         SUCCESS
     }
 
-    companion object {
-        private const val INFO_BASE_URL = " https://dev.tapptic.com/test/"
-    }
+
 }
