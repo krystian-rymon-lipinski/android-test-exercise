@@ -6,7 +6,6 @@ import android.os.Bundle
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.NavHostFragment
 import dagger.hilt.android.AndroidEntryPoint
-import timber.log.Timber
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
@@ -30,9 +29,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     override fun onBackPressed() {
-        Timber.d("HERE; onBackPressed")
         if (onBackPressedDispatcher.hasEnabledCallbacks()) {
-            Timber.d("HERE; callbacks enabled")
             onBackPressedDispatcher.onBackPressed()
         } else super.onBackPressed()
     }

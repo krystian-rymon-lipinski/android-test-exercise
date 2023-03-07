@@ -22,6 +22,8 @@ class ListFragment : Fragment() {
     private var layoutMode: MainActivity.LayoutMode? = null
     private var loadingDialog: LoadingDialog? = null
 
+    private var isNavigatingPending = false
+
     private lateinit var numberInfoAdapter: NumberInfoAdapter
 
     override fun onCreateView(
@@ -40,6 +42,7 @@ class ListFragment : Fragment() {
             viewModel = it.viewModel
             layoutMode = it.layoutMode
         }
+        isNavigatingPending = false
 
         setupRecyclerView()
         setupUiListeners()
@@ -101,7 +104,10 @@ class ListFragment : Fragment() {
         if (layoutMode == MainActivity.LayoutMode.PORTRAIT) {
             val navFragment = activity?.supportFragmentManager?.findFragmentById(
                 R.id.nav_host_fragment_container) as? NavHostFragment
-            navFragment?.navController?.navigate(R.id.action_listFragment_to_viewPagerDetailsFragment)
+            if (!isNavigatingPending) {
+                isNavigatingPending = true
+                navFragment?.navController?.navigate(R.id.action_listFragment_to_viewPagerDetailsFragment)
+            }
         }
     }
 

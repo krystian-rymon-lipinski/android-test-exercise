@@ -66,7 +66,6 @@ class DetailsFragment : Fragment() {
 
     private val onBackPressedCallback = object : OnBackPressedCallback(true) {
         override fun handleOnBackPressed() {
-            Timber.d("HERE; handleOnBackPressed")
             if (layoutMode == MainActivity.LayoutMode.PORTRAIT) {
                 exitDetailsScreen()
             } else {
