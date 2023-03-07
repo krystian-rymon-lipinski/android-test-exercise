@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.viewpager2.adapter.FragmentStateAdapter
+import androidx.viewpager2.widget.ViewPager2.OnPageChangeCallback
 import com.google.android.material.tabs.TabLayoutMediator
 import com.krystianrymonlipinski.testexercise.MainActivity
 import com.krystianrymonlipinski.testexercise.MainActivityViewModel
@@ -39,6 +40,7 @@ class ViewPagerDetailsFragment : Fragment() {
             detailsViewPager.apply {
                 adapter = PagerAdapter(it.size)
                 currentItem = viewModel?.selectedNumber?.value?.index ?: 0
+                registerOnPageChangeCallback(onPageChangeCallback)
             }
             TabLayoutMediator(detailsTabLayout, detailsViewPager) { tab, position ->
                 tab.text = it[position].name
@@ -54,6 +56,13 @@ class ViewPagerDetailsFragment : Fragment() {
             for (caption in tabCaptions) {
                 addTab(this.newTab())
             }
+        }
+    }
+
+    private val onPageChangeCallback = object : OnPageChangeCallback() {
+        override fun onPageSelected(position: Int) {
+            super.onPageSelected(position)
+            viewModel?.handleOnNumberSelected(position)
         }
     }
 

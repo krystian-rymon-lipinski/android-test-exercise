@@ -42,7 +42,7 @@ class MainActivityViewModel : ViewModel() {
         }
     }
 
-    fun handleOnCardClick(index: Int) {
+    fun handleOnNumberSelected(index: Int) {
         _numbersData.value?.get(index)?.name?.let {
             _selectedNumber.postValue(SelectedCard(index, it, null))
             loadNumberInfo(it)
