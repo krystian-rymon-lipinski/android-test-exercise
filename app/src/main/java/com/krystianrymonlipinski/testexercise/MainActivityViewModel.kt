@@ -51,13 +51,16 @@ class MainActivityViewModel @Inject constructor(
     fun getAllNumbersInfo() = _numbersData.value ?: emptyList()
     fun getCurrentlySelectedNumber() = _selectedNumber.value?.index
 
-    fun loadAllNumbersInfo() {
+    fun loadAllNumbersInfo() { withCoroutine {
         httpService.getAllNumbersInfo().enqueue(object : Callback<List<NumberObject>> {
-            override fun onResponse(call: Call<List<NumberObject>>?, response: Response<List<NumberObject>>?) {
+            override fun onResponse(
+                call: Call<List<NumberObject>>?,
+                response: Response<List<NumberObject>>?) { withCoroutine {
+
                 response?.let { res ->
-                    _numbersData.value = res.body().map {
+                    _numbersData.postValue(res.body().map {
                         NumberData(it.name, null)
-                    }
+                    })
                     _dataRetrievalState.postValue(DataRetrievalState.SUCCESS)
 
                     res.body().onEachIndexed { index, numberObject ->
@@ -67,51 +70,60 @@ class MainActivityViewModel @Inject constructor(
                 } ?: _dataRetrievalState.postValue(DataRetrievalState.FAILURE)
             }
 
+            }
             override fun onFailure(call: Call<List<NumberObject>>?, t: Throwable?) {
                 _dataRetrievalState.postValue(DataRetrievalState.FAILURE)
             }
-
         })
-    }
 
-    private fun loadNumberInfo(numberName: String) {
+    } }
+
+    private fun loadNumberInfo(numberName: String) { withCoroutine {
         httpService.getNumberInfo(numberName).enqueue(object : Callback<NumberObject> {
-            override fun onResponse(call: Call<NumberObject>?, response: Response<NumberObject>?) {
+            override fun onResponse(
+                call: Call<NumberObject>?,
+                response: Response<NumberObject>?) { withCoroutine {
+
                 response?.let {
                     loadImage(it.body().imageUrl)
-                } ?: Timber.d("HERE: No data returned")
-            }
-
+                } ?: Timber.d("No data returned")
+            } }
             override fun onFailure(call: Call<NumberObject>?, t: Throwable?) {
-                Timber.d("HERE: failure; ${t?.toString()}")
+                Timber.d("Failure: ${t?.toString()}")
             }
         })
-    }
+    } }
 
-    private fun loadImage(url: String, index: Int? = null) {
+    private fun loadImage(url: String, index: Int? = null) { withCoroutine {
         val secureUrl = url.replace("http", "https", ignoreCase = false)
 
         httpService.getImage(secureUrl).enqueue(object : Callback<ResponseBody> {
-            override fun onResponse(call: Call<ResponseBody>?, response: Response<ResponseBody>?) {
-                response?.let {
-                    viewModelScope.launch(Dispatchers.IO) {
-                        val bitmap = BitmapFactory.decodeStream(it.body().byteStream())
+            override fun onResponse(
+                call: Call<ResponseBody>?,
+                response: Response<ResponseBody>?) { withCoroutine {
 
-                        index?.let { index ->
-                            _numbersData.postValue(_numbersData.value?.apply {
-                                get(index).image = bitmap
-                            })
-                        } ?: _selectedNumber.postValue(_selectedNumber.value?.copy(image = bitmap))
-                    }
+                response?.let {
+                    val bitmap = BitmapFactory.decodeStream(it.body().byteStream())
+
+                    index?.let { index ->
+                        _numbersData.postValue(_numbersData.value?.apply {
+                            get(index).image = bitmap
+                        })
+                    } ?: _selectedNumber.postValue(_selectedNumber.value?.copy(image = bitmap))
                 }
-            }
+            } }
 
             override fun onFailure(call: Call<ResponseBody>?, t: Throwable?) {
-                //TODO: show a default image indicating it didn't work
+                Timber.d("Failure: ${t?.toString()}")
             }
         })
-    }
+    } }
 
+    private fun withCoroutine(action: () -> Unit) {
+        viewModelScope.launch(Dispatchers.IO) {
+            action.invoke()
+        }
+    }
     data class SelectedCard(
         val index: Int,
         val numberName: String,

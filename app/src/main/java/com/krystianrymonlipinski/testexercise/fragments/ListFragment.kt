@@ -7,10 +7,13 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.NavHostFragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.krystianrymonlipinski.testexercise.*
 import com.krystianrymonlipinski.testexercise.databinding.FragmentListBinding
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 class ListFragment : Fragment() {
 
@@ -59,10 +62,9 @@ class ListFragment : Fragment() {
                 orientation = LinearLayoutManager.VERTICAL
             }
         }
-        viewModel?.let {
+        viewModel?.let { withCoroutine {
             numberInfoAdapter.updateNumbersInfo(it.getAllNumbersInfo())
-        }
-
+        } }
     }
 
     private fun setupUiListeners() {
@@ -73,10 +75,10 @@ class ListFragment : Fragment() {
 
     private fun setupDataChangeObservers() {
         viewModel?.let { viewModel ->
-            viewModel.numbersData.observe(viewLifecycleOwner) {
+            viewModel.numbersData.observe(viewLifecycleOwner) { withCoroutine {
                 numberInfoAdapter.updateNumbersInfo(it)
-            }
-            viewModel.dataRetrievalState.observe(this) {
+            } }
+            viewModel.dataRetrievalState.observe(viewLifecycleOwner) {
                 when (it) {
                     MainActivityViewModel.DataRetrievalState.LOADING -> {
                         viewModel.loadAllNumbersInfo()
@@ -113,6 +115,12 @@ class ListFragment : Fragment() {
         _binding.apply {
             llNoDataLoaded.visibility = if (isRetrievalSuccessful) View.GONE else View.VISIBLE
             rvNumbersInfo.visibility = if (isRetrievalSuccessful) View.VISIBLE else View.GONE
+        }
+    }
+
+    private fun withCoroutine(action: () -> Unit) {
+        lifecycleScope.launch(Dispatchers.Main) {
+            action.invoke()
         }
     }
 

@@ -43,15 +43,6 @@ class MainActivityViewModelTest {
         testObj?.loadAllNumbersInfo()
 
         verify(getAllInfoRequest).enqueue(httpCallback.capture())
-
     }
-
-
-    @Test
-    fun loadAllNumbersInfo_failure() {
-
-    }
-
-
 
 }
