@@ -1,9 +1,11 @@
-package com.krystianrymonlipinski.testexercise
+package com.krystianrymonlipinski.testexercise.adapters
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import com.krystianrymonlipinski.testexercise.views.NumberCardView
 import com.krystianrymonlipinski.testexercise.databinding.AdapterNumberInfoBinding
+import com.krystianrymonlipinski.testexercise.models.NumberData
 
 class NumberInfoAdapter(
     private var activeCardIndex: Int?,

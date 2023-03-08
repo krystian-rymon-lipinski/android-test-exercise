@@ -2,6 +2,7 @@ package com.krystianrymonlipinski.testexercise
 
 import com.krystianrymonlipinski.testexercise.retrofit.HttpService
 import com.krystianrymonlipinski.testexercise.retrofit.model.NumberObject
+import com.krystianrymonlipinski.testexercise.viewmodels.MainActivityViewModel
 import org.junit.*
 import org.junit.runner.RunWith
 import org.mockito.ArgumentCaptor

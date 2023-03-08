@@ -1,4 +1,4 @@
-package com.krystianrymonlipinski.testexercise
+package com.krystianrymonlipinski.testexercise.dialogs
 
 import android.os.Bundle
 import android.view.LayoutInflater

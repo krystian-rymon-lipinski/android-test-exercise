@@ -9,8 +9,8 @@ import androidx.fragment.app.Fragment
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import androidx.viewpager2.widget.ViewPager2.OnPageChangeCallback
 import com.google.android.material.tabs.TabLayoutMediator
-import com.krystianrymonlipinski.testexercise.MainActivity
-import com.krystianrymonlipinski.testexercise.MainActivityViewModel
+import com.krystianrymonlipinski.testexercise.activities.MainActivity
+import com.krystianrymonlipinski.testexercise.viewmodels.MainActivityViewModel
 import com.krystianrymonlipinski.testexercise.R
 import com.krystianrymonlipinski.testexercise.databinding.FragmentViewPagerDetailsBinding
 

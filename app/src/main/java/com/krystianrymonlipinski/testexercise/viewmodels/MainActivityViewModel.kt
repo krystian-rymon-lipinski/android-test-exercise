@@ -1,4 +1,4 @@
-package com.krystianrymonlipinski.testexercise
+package com.krystianrymonlipinski.testexercise.viewmodels
 
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
@@ -6,6 +6,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.krystianrymonlipinski.testexercise.models.NumberData
 import com.krystianrymonlipinski.testexercise.retrofit.HttpService
 import com.krystianrymonlipinski.testexercise.retrofit.model.NumberObject
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -26,7 +27,9 @@ class MainActivityViewModel @Inject constructor(
 
     private val _numbersData: MutableLiveData<List<NumberData>> = MutableLiveData(listOf())
     val numbersData: LiveData<List<NumberData>> = _numbersData
-    private val _dataRetrievalState: MutableLiveData<DataRetrievalState> = MutableLiveData(DataRetrievalState.LOADING)
+    private val _dataRetrievalState: MutableLiveData<DataRetrievalState> = MutableLiveData(
+        DataRetrievalState.LOADING
+    )
     val dataRetrievalState: LiveData<DataRetrievalState> = _dataRetrievalState
     private val _selectedNumber: MutableLiveData<SelectedCard?> = MutableLiveData()
     val selectedNumber: LiveData<SelectedCard?> = _selectedNumber

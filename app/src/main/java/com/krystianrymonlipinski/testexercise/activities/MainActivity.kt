@@ -1,10 +1,12 @@
-package com.krystianrymonlipinski.testexercise
+package com.krystianrymonlipinski.testexercise.activities
 
 import android.content.res.Configuration
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.NavHostFragment
+import com.krystianrymonlipinski.testexercise.R
+import com.krystianrymonlipinski.testexercise.viewmodels.MainActivityViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint

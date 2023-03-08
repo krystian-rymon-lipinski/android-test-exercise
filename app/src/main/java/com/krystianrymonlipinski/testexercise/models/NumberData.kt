@@ -1,4 +1,4 @@
-package com.krystianrymonlipinski.testexercise
+package com.krystianrymonlipinski.testexercise.models
 
 import android.graphics.Bitmap
 

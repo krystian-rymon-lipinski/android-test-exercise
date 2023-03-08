@@ -11,7 +11,11 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.NavHostFragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.krystianrymonlipinski.testexercise.*
+import com.krystianrymonlipinski.testexercise.activities.MainActivity
+import com.krystianrymonlipinski.testexercise.adapters.NumberInfoAdapter
 import com.krystianrymonlipinski.testexercise.databinding.FragmentListBinding
+import com.krystianrymonlipinski.testexercise.dialogs.LoadingDialog
+import com.krystianrymonlipinski.testexercise.viewmodels.MainActivityViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
